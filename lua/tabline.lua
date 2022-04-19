@@ -282,6 +282,29 @@ function Buffer:new(buffer)
   return newObj
 end
 
+function Buffer:get_icon()
+  local dev, devhl
+  local status, devicons = pcall(require, "nvim-web-devicons")
+  if not status then
+    dev, devhl = nil, nil
+  elseif self.filetype == "TelescopePrompt" then
+    dev, devhl = devicons.get_icon("telescope")
+  elseif self.filetype == "fugitive" then
+    dev, devhl = devicons.get_icon("git")
+  elseif self.filetype == "vimwiki" then
+    dev, devhl = devicons.get_icon("markdown")
+  elseif self.buftype == "terminal" then
+    dev, devhl = devicons.get_icon("zsh")
+  elseif vim.fn.isdirectory(self.file) == 1 then
+    dev, devhl = "", nil
+  else
+    dev, devhl = devicons.get_icon(self.file, vim.fn.expand("#" .. self.bufnr .. ":e"))
+  end
+  if dev and M.options.show_devicons then
+    return dev
+  end
+end
+
 function Buffer:get_props()
   self.file = vim.fn.bufname(self.bufnr)
   self.filepath = vim.fn.expand("#" .. self.bufnr .. ":p:~")
@@ -290,26 +313,7 @@ function Buffer:get_props()
   self.modified = vim.fn.getbufvar(self.bufnr, "&modified") == 1
   self.modified_icon = self.modified and M.options.modified_icon or ""
   self.visible = vim.fn.bufwinid(self.bufnr) ~= -1
-  local dev, devhl
-  local status, _ = pcall(require, "nvim-web-devicons")
-  if not status then
-    dev, devhl = nil, nil
-  elseif self.filetype == "TelescopePrompt" then
-    dev, devhl = require("nvim-web-devicons").get_icon("telescope")
-  elseif self.filetype == "fugitive" then
-    dev, devhl = require("nvim-web-devicons").get_icon("git")
-  elseif self.filetype == "vimwiki" then
-    dev, devhl = require("nvim-web-devicons").get_icon("markdown")
-  elseif self.buftype == "terminal" then
-    dev, devhl = require("nvim-web-devicons").get_icon("zsh")
-  elseif vim.fn.isdirectory(self.file) == 1 then
-    dev, devhl = "", nil
-  else
-    dev, devhl = require("nvim-web-devicons").get_icon(self.file, vim.fn.expand("#" .. self.bufnr .. ":e"))
-  end
-  if dev and M.options.show_devicons then
-    self.icon = dev
-  end
+  self.icon = self:get_icon()
   self.name = self:name()
   return self
 end
