@@ -318,14 +318,6 @@ function Buffer:get_props()
   return self
 end
 
-function split(s, delimiter)
-  local result = {}
-  for match in (s .. delimiter):gmatch("(.-)" .. delimiter) do
-    table.insert(result, match)
-  end
-  return result
-end
-
 function Buffer:len()
   local margin = 2
   return vim.fn.strchars(" " .. " " .. " " .. self.name .. " " .. self.modified_icon .. " ") + margin
@@ -347,7 +339,7 @@ function Buffer:name()
   elseif self.file:sub(self.file:len() - 2, self.file:len()) == "FZF" then
     return "FZF"
   elseif self.buftype == "terminal" then
-    local mtch = string.match(split(self.file, " ")[1], "term:.*:(%a+)")
+    local mtch = string.match(vim.split(self.file, " ")[1], "term:.*:(%a+)")
     return mtch ~= nil and mtch or vim.fn.fnamemodify(vim.env.SHELL, ":t")
   elseif vim.fn.isdirectory(self.file) == 1 then
     return vim.fn.fnamemodify(self.file, ":p:.")
