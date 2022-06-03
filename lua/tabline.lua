@@ -797,7 +797,7 @@ function M.buffer_previous()
   end
 end
 
-function M.setup(opts)
+local function init_global_vars()
   vim.cmd([[
     let g:tabline_tab_data = get(g:, "tabline_tab_data", '{}')
     let g:tabline_show_devicons = get(g:, "tabline_show_devicons", v:true)
@@ -810,17 +810,9 @@ function M.setup(opts)
     let g:tabline_show_tabline_buffers = get(g:, "tabline_show_tabline_buffers", 2)
     let g:tabline_show_tabline_tabs = get(g:, "tabline_show_tabline_tabs", 1)
   ]])
+end
 
-  if opts == nil then
-    opts = { enable = true }
-  end
-  if opts.enable == nil then
-    opts.enable = true
-  end
-  if opts.options == nil then
-    opts.options = {}
-  end
-
+local function load_lualine_config()
   local status, _ = pcall(require, "lualine.config")
   if status then
     local lc = require("lualine.config")
@@ -843,6 +835,22 @@ function M.setup(opts)
       error("Unable to load separators from lualine")
     end
   end
+end
+
+function M.setup(opts)
+  init_global_vars()
+
+  if opts == nil then
+    opts = { enable = true }
+  end
+  if opts.enable == nil then
+    opts.enable = true
+  end
+  if opts.options == nil then
+    opts.options = {}
+  end
+
+  load_lualine_config()
 
   if opts.options.component_separators ~= nil then
     M.options.component_left = opts.options.component_separators[1]
