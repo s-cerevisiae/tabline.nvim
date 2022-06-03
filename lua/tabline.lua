@@ -283,6 +283,10 @@ function Buffer:new(buffer)
 end
 
 function Buffer:get_icon()
+  if not M.options.show_devicons then
+    return nil
+  end
+
   local dev
   local status, devicons = pcall(require, "nvim-web-devicons")
   if not status then
@@ -300,9 +304,8 @@ function Buffer:get_icon()
   else
     dev, _ = devicons.get_icon(self.file, vim.fn.expand("#" .. self.bufnr .. ":e"))
   end
-  if dev and M.options.show_devicons then
-    return dev
-  end
+
+  return dev
 end
 
 function Buffer:get_props()
