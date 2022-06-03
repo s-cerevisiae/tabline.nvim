@@ -283,22 +283,22 @@ function Buffer:new(buffer)
 end
 
 function Buffer:get_icon()
-  local dev, devhl
+  local dev
   local status, devicons = pcall(require, "nvim-web-devicons")
   if not status then
-    dev, devhl = nil, nil
+    dev = nil
   elseif self.filetype == "TelescopePrompt" then
-    dev, devhl = devicons.get_icon("telescope")
+    dev, _ = devicons.get_icon("telescope")
   elseif self.filetype == "fugitive" then
-    dev, devhl = devicons.get_icon("git")
+    dev, _ = devicons.get_icon("git")
   elseif self.filetype == "vimwiki" then
-    dev, devhl = devicons.get_icon("markdown")
+    dev, _ = devicons.get_icon("markdown")
   elseif self.buftype == "terminal" then
-    dev, devhl = devicons.get_icon("zsh")
+    dev, _ = devicons.get_icon("zsh")
   elseif vim.fn.isdirectory(self.file) == 1 then
-    dev, devhl = "", nil
+    dev, _ = "", nil
   else
-    dev, devhl = devicons.get_icon(self.file, vim.fn.expand("#" .. self.bufnr .. ":e"))
+    dev, _ = devicons.get_icon(self.file, vim.fn.expand("#" .. self.bufnr .. ":e"))
   end
   if dev and M.options.show_devicons then
     return dev
