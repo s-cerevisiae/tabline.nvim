@@ -317,7 +317,7 @@ function Buffer:get_props()
   self.modified_icon = self.modified and M.options.modified_icon or ""
   self.visible = vim.fn.bufwinid(self.bufnr) ~= -1
   self.icon = self:get_icon()
-  self.name = self:name()
+  self.name = self:get_name()
   return self
 end
 
@@ -326,7 +326,7 @@ function Buffer:len()
   return vim.fn.strchars(" " .. " " .. " " .. self.name .. " " .. self.modified_icon .. " ") + margin
 end
 
-function Buffer:name()
+function Buffer:get_name()
   if self.buftype == "help" then
     return "help:" .. vim.fn.fnamemodify(self.file, ":t:r")
   elseif self.buftype == "quickfix" then
